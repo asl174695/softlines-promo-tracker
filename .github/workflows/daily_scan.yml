@@ -1,0 +1,38 @@
+name: Daily Promo Scan
+
+on:
+  schedule:
+    - cron: '0 14 * * *'  # Runs daily at 9am EST
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests beautifulsoup4 pandas selenium webdriver-manager
+    
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+    
+    - name: Run scanner
+      run: python promo_scanner.py
+    
+    - name: Commit results
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add promo_log.csv
+        git diff --staged --quiet || git commit -m "Daily promo scan $(date +'%Y-%m-%d')"
+        git push
