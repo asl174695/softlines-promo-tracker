@@ -99,3 +99,8 @@ date,retailer,url,max_discount_pct,avg_discount_pct,discounts_found,promo_banner
 2026-04-05 14:36,Wayfair,https://www.wayfair.com/daily-sales,0,0.0,,,,success,0.0,no promotion
 2026-04-05 14:36,Capri - Michael Kors,https://www.michaelkors.com/sale,20,18.8,"20% off, 10% off",,"Menu, 0My cart 0 items",success,20.0,in line with average
 2026-04-05 14:37,European Wax Center,https://www.waxcenter.com/promotions,50,50.0,50% off,,Services,success,35.7,ABOVE average - elevated promo
+2026-04-06 14:48,Lululemon,https://shop.lululemon.com/c/sale,15,15.0,15% off,Get 15% off regular-priced items.Sign UpClose | Get 15% off regular-priced items.Sign UpClose,"Skip Navigation, lululemon athleticaMy AccountMy baghamburger icon, My AccountMy bag, My Account, My bag",success,15.0,in line with average
+2026-04-06 14:48,Dollar Tree,https://www.dollartree.com/sale,0,0.0,,Promo Line | PreviousNext | Summer Fun,"All Departments, ‹ Back",success,0.0,no promotion
+2026-04-06 14:48,Wayfair,https://www.wayfair.com/daily-sales,0,0.0,,,,success,0.0,no promotion
+2026-04-06 14:48,Capri - Michael Kors,https://www.michaelkors.com/sale,10,10.0,10% off,,"Menu, 0My cart 0 items",success,20.0,BELOW average - reduced promo
+2026-04-06 14:50,European Wax Center,https://www.waxcenter.com/promotions,0,0.0,,,,"error: HTTPConnectionPool(host='localhost', port=58587): Read timed out. (read timeout=120)",42.9,BELOW average - reduced promo
