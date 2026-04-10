@@ -119,3 +119,8 @@ date,retailer,url,max_discount_pct,avg_discount_pct,discounts_found,promo_banner
 2026-04-09 15:23,Wayfair,https://www.wayfair.com/daily-sales,0,0.0,,,,success,0.0,no promotion
 2026-04-09 15:23,Capri - Michael Kors,https://www.michaelkors.com/sale,10,10.0,10% off,,"Menu, 0My cart 0 items",success,15.7,BELOW average - reduced promo
 2026-04-09 15:23,European Wax Center,https://www.waxcenter.com/promotions,50,50.0,50% off,,Services,success,42.9,ABOVE average - elevated promo
+2026-04-10 14:49,Lululemon,https://shop.lululemon.com/c/sale,15,15.0,15% off,Get 15% off regular-priced items.Sign UpClose | Get 15% off regular-priced items.Sign UpClose,"Skip Navigation, lululemon athleticaMy AccountMy baghamburger icon, My AccountMy bag, My Account, My bag",success,15.0,in line with average
+2026-04-10 14:49,Dollar Tree,https://www.dollartree.com/sale,0,0.0,,Promo Line | Summer Fun | Kitchen & Dining,"All Departments, ‹ Back",success,0.0,no promotion
+2026-04-10 14:49,Wayfair,https://www.wayfair.com/daily-sales,0,0.0,,,,success,0.0,no promotion
+2026-04-10 14:49,Capri - Michael Kors,https://www.michaelkors.com/sale,10,10.0,10% off,,"Menu, 0My cart 0 items",success,14.3,BELOW average - reduced promo
+2026-04-10 14:49,European Wax Center,https://www.waxcenter.com/promotions,50,50.0,50% off,,Services,success,42.9,ABOVE average - elevated promo
