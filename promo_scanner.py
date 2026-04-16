@@ -43,25 +43,58 @@ def extract_discount_percentages(text):
     return {"discounts_found": "", "max_discount": 0, "avg_discount": 0}
 
 def extract_promo_banners(soup):
+    for tag in soup.find_all(['nav', 'header', 'footer']):
+        tag.decompose()
+    
     banner_tags = soup.find_all(
-        attrs={"class": re.compile(r'banner|promo|sale|offer|deal', re.I)}
+        attrs={"class": re.compile(r'banner|promo|sale|offer|deal|alert|announcement', re.I)}
     )
+    
+    junk_phrases = [
+        'skip navigation', 'my account', 'my bag', 'hamburger',
+        'sign in', 'search', 'menu', 'back', 'cart', 'items',
+        'accessibility', 'cookie', 'javascript'
+    ]
+    
     banner_texts = []
-    for tag in banner_tags[:5]:
+    for tag in banner_tags[:10]:
         text = tag.get_text(strip=True)
-        if text and len(text) > 3 and len(text) < 200:
-            banner_texts.append(text)
+        text_lower = text.lower()
+        
+        if not text or len(text) < 10 or len(text) > 300:
+            continue
+        if any(junk in text_lower for junk in junk_phrases):
+            continue
+        if not any(word in text_lower for word in ['off', 'sale', 'save', 'free', 'deal', 'promo', '%']):
+            continue
+            
+        banner_texts.append(text)
+    
     return " | ".join(banner_texts[:3]) if banner_texts else ""
 
 def extract_sale_categories(soup):
+    junk_phrases = [
+        'skip', 'navigation', 'my account', 'my bag', 'hamburger',
+        'sign in', 'search', 'menu', 'back', 'cart', 'items',
+        'accessibility', 'cookie', 'all departments'
+    ]
+    
     category_tags = soup.find_all(
-        attrs={"class": re.compile(r'categor|nav|menu|department', re.I)}
+        attrs={"class": re.compile(r'categor|department|section-title|category-name', re.I)}
     )
+    
     categories = []
-    for tag in category_tags[:10]:
+    for tag in category_tags[:15]:
         text = tag.get_text(strip=True)
-        if text and len(text) > 2 and len(text) < 50:
-            categories.append(text)
+        text_lower = text.lower()
+        
+        if not text or len(text) < 3 and len(text) > 40:
+            continue
+        if any(junk in text_lower for junk in junk_phrases):
+            continue
+            
+        categories.append(text)
+    
     return ", ".join(list(dict.fromkeys(categories))[:5]) if categories else ""
 
 def get_rolling_signal(retailer, current_discount, filename="promo_log.csv", window=7):
