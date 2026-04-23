@@ -310,7 +310,7 @@
   </table>
 </div>
 
-<div id="file-input-section">
+<div id="file-input-section" style="display:none">
   <div class="upload-prompt">Load Promo Data</div>
   <div class="upload-sub">Upload your promo_log.csv to view the dashboard</div>
   <label class="upload-btn" for="csv-file">Select promo_log.csv</label>
@@ -330,6 +330,11 @@ const ACTIVE_RETAILERS = [
   'European Wax Center',
   'Dollar Tree'
 ];
+
+fetch('https://raw.githubusercontent.com/asl174695/softlines-promo-tracker/main/promo_log.csv')
+  .then(response => response.text())
+  .then(text => parseAndRender(text))
+  .catch(err => console.error('Failed to load data:', err));
 
 document.getElementById('csv-file').addEventListener('change', function(e) {
   const file = e.target.files[0];
