@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Softlines Promo Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #c8a96e;
+    --accent-dim: rgba(200,169,110,0.12);
+    --text: #e8e4dc;
+    --muted: #6b6878;
+    --above: #e05c5c;
+    --below: #5ce08a;
+    --inline: #c8a96e;
+    --none: #444455;
+    --red-dim: rgba(224,92,92,0.1);
+    --green-dim: rgba(92,224,138,0.1);
+    --gold-dim: rgba(200,169,110,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 48px 40px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(200,169,110,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -200px; left: -200px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(92,92,224,0.03) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-left h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+
+  .header-left .subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .header-right { text-align: right; }
+
+  .last-updated { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+  .last-updated span { color: var(--accent); }
+
+  .coverage-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.4;
+  }
+
+  .summary-card .label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .summary-card .value {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .summary-card .sub { font-size: 10px; color: var(--muted); margin-top: 6px; }
+
+  .table-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .table-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+
+  .live-badge { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--accent); letter-spacing: 1px; }
+
+  .live-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead th {
+    padding: 12px 24px;
+    text-align: left;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    animation: fadeIn 0.4s ease forwards;
+    opacity: 0;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(200,169,110,0.03); }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  td { padding: 16px 24px; font-size: 12px; vertical-align: middle; }
+
+  .retailer-name { font-weight: 500; color: var(--text); font-size: 13px; }
+  .date-cell { color: var(--muted); font-size: 11px; }
+
+  .discount-cell {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .discount-high { color: var(--above); }
+  .discount-mid  { color: var(--accent); }
+  .discount-low  { color: var(--muted); }
+  .discount-none { color: var(--none); }
+
+  .discounts-found { font-size: 11px; color: var(--muted); max-width: 200px; }
+
+  .signal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+
+  .signal-above        { color: var(--above);  border-color: var(--above);  background: var(--red-dim);  }
+  .signal-below        { color: var(--below);  border-color: var(--below);  background: var(--green-dim);}
+  .signal-inline       { color: var(--inline); border-color: var(--inline); background: var(--gold-dim); }
+  .signal-none         { color: var(--none);   border-color: var(--none);   background: transparent;     }
+  .signal-insufficient { color: var(--muted);  border-color: var(--border); background: transparent;     }
+
+  .rolling-avg { font-size: 12px; color: var(--muted); }
+  .rolling-avg span { color: var(--text); }
+
+  .banner-text { font-size: 11px; color: var(--accent); max-width: 240px; line-height: 1.5; }
+  .no-banner { color: var(--none); font-size: 11px; }
+
+  .footer { margin-top: 32px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-note { font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+  .footer-note a { color: var(--accent); text-decoration: none; }
+
+  #file-input-section { text-align: center; padding: 80px 40px; }
+
+  .upload-prompt { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--text); margin-bottom: 12px; }
+  .upload-sub { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-bottom: 32px; }
+
+  .upload-btn {
+    display: inline-block;
+    padding: 12px 32px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: var(--accent-dim);
+    transition: all 0.2s;
+  }
+
+  .upload-btn:hover { background: rgba(200,169,110,0.2); }
+  input[type="file"] { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Softlines Promo Tracker</h1>
+    <div class="subtitle">Softlines Retail Coverage Universe &nbsp;·&nbsp; BMO Capital Markets</div>
+  </div>
+  <div class="header-right">
+    <div class="last-updated">Last updated: <span id="last-updated-date">—</span></div>
+    <div class="coverage-label">Automated Daily Scan</div>
+  </div>
+</header>
+
+<div class="summary-bar" id="summary-bar" style="display:none">
+  <div class="summary-card">
+    <div class="label">Retailers Tracked</div>
+    <div class="value" id="stat-retailers">—</div>
+    <div class="sub">active coverage</div>
+  </div>
+  <div class="summary-card">
+    <div class="label">Max Discount Today</div>
+    <div class="value" id="stat-max">—</div>
+    <div class="sub" id="stat-max-name">across universe</div>
+  </div>
+  <div class="summary-card">
+    <div class="label">Elevated Promos</div>
+    <div class="value" id="stat-elevated">—</div>
+    <div class="sub">above rolling avg</div>
+  </div>
+  <div class="summary-card">
+    <div class="label">Avg Discount</div>
+    <div class="value" id="stat-avg">—</div>
+    <div class="sub">universe average</div>
+  </div>
+</div>
+
+<div class="table-container" id="main-table" style="display:none">
+  <div class="table-header-bar">
+    <div class="table-title">Daily Promotional Intelligence</div>
+    <div class="live-badge"><div class="live-dot"></div>Live Data</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Retailer</th>
+        <th>Date</th>
+        <th>Max Discount</th>
+        <th>Discounts Found</th>
+        <th>Rolling Avg (7d)</th>
+        <th>Signal</th>
+        <th>Promo Banner</th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+</div>
+
+<div id="file-input-section">
+  <div class="upload-prompt">Load Promo Data</div>
+  <div class="upload-sub">Upload your promo_log.csv to view the dashboard</div>
+  <label class="upload-btn" for="csv-file">Select promo_log.csv</label>
+  <input type="file" id="csv-file" accept=".csv">
+</div>
+
+<div class="footer" id="footer" style="display:none">
+  <div class="footer-note">Built by Adam Liss &nbsp;·&nbsp; <a href="https://github.com/asl174695/softlines-promo-tracker" target="_blank">github.com/asl174695/softlines-promo-tracker</a></div>
+  <div class="footer-note">Data refreshes daily at 9:00 AM EST via GitHub Actions</div>
+</div>
+
+<script>
+const ACTIVE_RETAILERS = [
+  'Lululemon',
+  'Wayfair',
+  'Capri - Michael Kors',
+  'European Wax Center',
+  'Dollar Tree'
+];
+
+document.getElementById('csv-file').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => parseAndRender(ev.target.result);
+  reader.readAsText(file);
+});
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+  return lines.slice(1).map(line => {
+    const vals = [];
+    let cur = '', inQ = false;
+    for (let c of line) {
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { vals.push(cur.trim()); cur = ''; }
+      else { cur += c; }
+    }
+    vals.push(cur.trim());
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = (vals[i] || '').replace(/"/g, '').trim());
+    return obj;
+  });
+}
+
+function getLatestPerRetailer(rows) {
+  const latest = {};
+  rows.forEach(row => {
+    const r = row.retailer;
+    if (!r || !ACTIVE_RETAILERS.includes(r)) return;
+    if (!latest[r] || row.date > latest[r].date) latest[r] = row;
+  });
+  return Object.values(latest);
+}
+
+function getSignalClass(signal) {
+  if (!signal) return 'signal-insufficient';
+  const s = signal.toLowerCase();
+  if (s.includes('above')) return 'signal-above';
+  if (s.includes('below')) return 'signal-below';
+  if (s.includes('in line')) return 'signal-inline';
+  if (s.includes('no promotion')) return 'signal-none';
+  return 'signal-insufficient';
+}
+
+function getSignalLabel(signal) {
+  if (!signal) return '—';
+  const s = signal.toLowerCase();
+  if (s.includes('above')) return '▲ Elevated';
+  if (s.includes('below')) return '▼ Reduced';
+  if (s.includes('in line')) return '→ In Line';
+  if (s.includes('no promotion')) return '○ No Promo';
+  return signal;
+}
+
+function getDiscountClass(pct) {
+  const n = parseInt(pct) || 0;
+  if (n === 0) return 'discount-none';
+  if (n >= 40) return 'discount-high';
+  if (n >= 20) return 'discount-mid';
+  return 'discount-low';
+}
+
+function parseAndRender(text) {
+  const rows = parseCSV(text);
+  const latest = getLatestPerRetailer(rows);
+
+  if (latest.length === 0) {
+    document.getElementById('file-input-section').innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted)">No matching retailer data found.</div>';
+    return;
+  }
+
+  document.getElementById('file-input-section').style.display = 'none';
+  document.getElementById('summary-bar').style.display = 'grid';
+  document.getElementById('main-table').style.display = 'block';
+  document.getElementById('footer').style.display = 'flex';
+
+  const maxRow = latest.reduce((a, b) => (parseInt(a.max_discount_pct)||0) > (parseInt(b.max_discount_pct)||0) ? a : b);
+  const avgDiscount = Math.round(latest.reduce((s, r) => s + (parseInt(r.max_discount_pct)||0), 0) / latest.length);
+  const elevated = latest.filter(r => r.promo_signal && r.promo_signal.toLowerCase().includes('above')).length;
+  const lastDate = latest.reduce((a, b) => a.date > b.date ? a : b).date;
+
+  document.getElementById('last-updated-date').textContent = lastDate;
+  document.getElementById('stat-retailers').textContent = latest.length;
+  document.getElementById('stat-max').textContent = (parseInt(maxRow.max_discount_pct)||0) + '%';
+  document.getElementById('stat-max-name').textContent = maxRow.retailer;
+  document.getElementById('stat-elevated').textContent = elevated;
+  document.getElementById('stat-avg').textContent = avgDiscount + '%';
+
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = '';
+
+  latest.sort((a, b) => (parseInt(b.max_discount_pct)||0) - (parseInt(a.max_discount_pct)||0));
+
+  latest.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    tr.style.animationDelay = `${i * 0.06}s`;
+
+    const maxPct = parseInt(row.max_discount_pct) || 0;
+    const rollingAvg = parseFloat(row.rolling_avg_discount) || 0;
+    const signal = row.promo_signal || '';
+    const banner = row.promo_banners || '';
+    const discountsFound = row.discounts_found || '';
+
+    tr.innerHTML = `
+      <td class="retailer-name">${row.retailer || '—'}</td>
+      <td class="date-cell">${row.date || '—'}</td>
+      <td class="discount-cell ${getDiscountClass(maxPct)}">${maxPct > 0 ? maxPct + '%' : '—'}</td>
+      <td class="discounts-found">${discountsFound || '<span style="color:var(--none)">—</span>'}</td>
+      <td class="rolling-avg">${rollingAvg > 0 ? '<span>' + rollingAvg + '%</span>' : '<span style="color:var(--none)">—</span>'}</td>
+      <td><span class="signal-badge ${getSignalClass(signal)}">${getSignalLabel(signal)}</span></td>
+      <td>${banner ? '<div class="banner-text">' + banner.substring(0, 120) + (banner.length > 120 ? '...' : '') + '</div>' : '<span class="no-banner">—</span>'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+</script>
+</body>
+</html>
